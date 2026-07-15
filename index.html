@@ -16,12 +16,6 @@
   </p>
 
   <div class="hero">
-    <div class="counter-row">
-      <div class="counter" x-text="count.toLocaleString('ja-JP')">1</div>
-      <div class="counter-unit">色</div>
-    </div>
-    <div class="counter-sub" x-text="`全体の ${percentText}%`">全体の 0.0000060%</div>
-
     <div class="slider-block">
       <div class="slider-label">
         <span>白からの距離</span>
@@ -32,7 +26,22 @@
              :style="`--fill:${dist/maxDist*100}%`">
     </div>
 
+    <div class="hero-top">
+      <div class="grid hero-grid">
+        <template x-for="cell in cells" :key="cell.r + '-' + cell.g + '-' + cell.b">
+          <div class="cell" :style="`background: rgb(${cell.r},${cell.g},${cell.b})`"
+               :title="`rgb(${cell.r},${cell.g},${cell.b}) 距離${cell.d.toFixed(2)}`"></div>
+        </template>
+      </div>
 
+      <div class="counter-block">
+        <div class="counter-row">
+          <div class="counter" x-text="count.toLocaleString('ja-JP')">1</div>
+          <div class="counter-unit">色</div>
+        </div>
+        <div class="counter-sub" x-text="`全体の ${percentText}%`">全体の 0.0000060%</div>
+      </div>
+    </div>
   </div>
 
   <div class="swatch-panel">
@@ -41,12 +50,6 @@
       左上が純白 <code>(255,255,255)</code>、右下に向かうほど白から遠い色です。
       <b x-text="renderNote"></b>
     </p>
-    <div class="grid">
-      <template x-for="cell in cells" :key="cell.r + '-' + cell.g + '-' + cell.b">
-        <div class="cell" :style="`background: rgb(${cell.r},${cell.g},${cell.b})`"
-             :title="`rgb(${cell.r},${cell.g},${cell.b}) 距離${cell.d.toFixed(2)}`"></div>
-      </template>
-    </div>
     <div class="more-note" x-text="moreNote"></div>
   </div>
 

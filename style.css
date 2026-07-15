@@ -59,10 +59,6 @@ h1{
   margin:0 0 14px;
   letter-spacing:0.02em;
 }
-h1 em{
-  font-style:normal;
-  color:var(--hanko);
-}
 
 .lede{
   color:var(--fg-dim);
@@ -78,6 +74,21 @@ h1 em{
   border-radius:18px;
   padding:40px clamp(20px,4vw,48px);
   margin-bottom:28px;
+}
+
+.hero-top{
+  display:flex;
+  align-items:center;
+  gap:28px;
+  flex-wrap:wrap;
+}
+.hero-grid{
+  flex:1 1 320px;
+  grid-template-columns:repeat(20, 1fr);
+}
+.counter-block{
+  flex:0 0 auto;
+  margin-left:auto;
 }
 
 .counter-row{
@@ -96,6 +107,8 @@ h1 em{
   line-height:1;
   letter-spacing:-0.02em;
   font-variant-numeric:tabular-nums;
+  width:7ch;
+  text-align:right;
 }
 
 .counter-unit{
@@ -109,11 +122,10 @@ h1 em{
   font-size:13px;
   color:var(--gold);
   text-align:right;
-  margin-bottom:34px;
 }
 
 .slider-block{
-  margin-bottom:8px;
+  margin-bottom:28px;
 }
 .slider-label{
   display:flex;
