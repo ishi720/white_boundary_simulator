@@ -69,11 +69,8 @@ h1{
 
 /* ---- Hero counter ---- */
 .hero{
-  background:linear-gradient(180deg, var(--panel), var(--panel-2));
   border:1px solid var(--line);
-  border-radius:18px;
   padding:40px clamp(20px,4vw,48px);
-  margin-bottom:28px;
 }
 
 .hero-top{
