@@ -9,12 +9,10 @@
 
 <body>
 <div class="wrap" x-data="whiteApp()" x-init="init()">
-  <div class="eyebrow">Color Boundary Simulator</div>
-  <h1>白は、<em>どこまで</em>白か。</h1>
+  <div class="eyebrow">White Boundary Simulator</div>
+  <h1>白は、どこまで白か。</h1>
   <p class="lede">
-    純白 <code>(255, 255, 255)</code> からの距離をスライダーで動かして、
-    「白として数えられる色」がどこまで広がるかを見てみましょう。
-    RGB全16,777,216色のうち、白の周辺だけを切り出して計算しています。
+    どこまで白として数えられるかシミュレーションしてみましょう！
   </p>
 
   <div class="hero">
@@ -34,12 +32,7 @@
              :style="`--fill:${dist/maxDist*100}%`">
     </div>
 
-    <div class="presets">
-      <button class="preset-btn" @click="setDist(0)">0（純白のみ）</button>
-      <button class="preset-btn" @click="jumpToTarget(200)">「200色」の位置へ</button>
-      <button class="preset-btn" @click="setDist(15)">距離 15</button>
-      <button class="preset-btn" @click="setDist(maxDist)">距離 30（最大）</button>
-    </div>
+
   </div>
 
   <div class="swatch-panel">
