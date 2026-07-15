@@ -45,6 +45,7 @@ function whiteApp() {
     count: 0,
     percentText: '0',
     cells: [],
+    displayCells: [],
     renderNote: '',
     moreNote: '',
     targetInput: 200,
@@ -88,6 +89,8 @@ function whiteApp() {
         this.renderNote = `${MAX_RENDER}色を間引いて表示中`;
         this.moreNote = `※ 実際は ${count.toLocaleString('ja-JP')} 色あります(表示負荷軽減のため間引いています)`;
       }
+
+      this.displayCells = Array.from({ length: MAX_RENDER }, (_, i) => this.cells[i] || null);
 
       this.drawChart();
     },

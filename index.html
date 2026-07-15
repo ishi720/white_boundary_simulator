@@ -15,6 +15,13 @@
     どこまで白として数えられるかシミュレーションしてみましょう！
   </p>
 
+  <footer>
+    計算方法: 純白 (255,255,255) からのユークリッド距離
+    <code>√((255-R)² + (255-G)² + (255-B)²)</code> が指定した距離以内に入る
+    RGB色の数を数えています。全16,777,216色のうち白コーナー付近のみを対象に、
+    ブラウザ上でJavaScript（Alpine.js）によりリアルタイム計算しています。
+  </footer>
+
   <div class="hero">
     <div class="slider-block">
       <div class="slider-label">
@@ -27,14 +34,24 @@
     </div>
 
     <div class="hero-top">
-      <div class="grid hero-grid">
-        <template x-for="cell in cells" :key="cell.r + '-' + cell.g + '-' + cell.b">
-          <div class="cell" :style="`background: rgb(${cell.r},${cell.g},${cell.b})`"
-               :title="`rgb(${cell.r},${cell.g},${cell.b}) 距離${cell.d.toFixed(2)}`"></div>
-        </template>
+      <div class="hero-grid-block">
+        <div class="section-title">Swatches</div>
+        <div class="grid hero-grid">
+          <template x-for="(cell, i) in displayCells" :key="i">
+            <div class="cell" :class="{ 'cell-empty': !cell }"
+                 :style="cell ? `background: rgb(${cell.r},${cell.g},${cell.b})` : ''"
+                 :title="cell ? `rgb(${cell.r},${cell.g},${cell.b}) 距離${cell.d.toFixed(2)}` : ''"></div>
+          </template>
+        </div>
       </div>
 
       <div class="counter-block">
+        <p class="swatch-caption">
+          左上が純白 <code>(255,255,255)</code>、右下に向かうほど白から遠い色です。
+          <b x-text="renderNote"></b>
+        </p>
+        <div class="more-note" x-text="moreNote"></div>
+        <canvas class="counter-chart" x-ref="chart"></canvas>
         <div class="counter-row">
           <div class="counter" x-text="count.toLocaleString('ja-JP')">1</div>
           <div class="counter-unit">色</div>
@@ -43,39 +60,6 @@
       </div>
     </div>
   </div>
-
-  <div class="swatch-panel">
-    <div class="section-title">Swatches</div>
-    <p class="swatch-caption">
-      左上が純白 <code>(255,255,255)</code>、右下に向かうほど白から遠い色です。
-      <b x-text="renderNote"></b>
-    </p>
-    <div class="more-note" x-text="moreNote"></div>
-  </div>
-
-  <div class="row">
-    <div class="card">
-      <div class="section-title">Finder</div>
-      <p class="hint">目標の色数を入力すると、その色数にちょうど到達する距離を探します。</p>
-      <div class="finder-form">
-        <input type="number" x-model.number="targetInput" min="1" max="50000">
-        <button @click="find()">距離を探す</button>
-      </div>
-      <div class="finder-result" x-html="findResult"></div>
-    </div>
-
-    <div class="card">
-      <div class="section-title">Distance vs Count</div>
-      <canvas x-ref="chart"></canvas>
-    </div>
-  </div>
-
-  <footer>
-    計算方法: 純白 (255,255,255) からのユークリッド距離
-    <code>√((255-R)² + (255-G)² + (255-B)²)</code> が指定した距離以内に入る
-    RGB色の数を数えています。全16,777,216色のうち白コーナー付近のみを対象に、
-    ブラウザ上でJavaScript（Alpine.js）によりリアルタイム計算しています。
-  </footer>
 
 </div>
 
