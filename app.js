@@ -16,7 +16,7 @@ for (let dr = 0; dr <= MAX_DIFF; dr++) {
 points.sort((a, b) => a.d2 - b.d2);
 
 const TOTAL_COLORS = 256 * 256 * 256;
-const MAX_RENDER = 480;
+const MAX_RENDER = 400;
 
 function countAt(d) {
   const target = d * d + 1e-9;
