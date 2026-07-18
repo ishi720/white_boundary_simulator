@@ -321,7 +321,7 @@ input[type="range"]:focus-visible::-webkit-slider-thumb{
   margin:0;
 }
 
-footer{
+.note{
   color:var(--fg-dim);
   font-size:12px;
   line-height:2;
@@ -329,7 +329,7 @@ footer{
   padding-bottom:24px;
   margin-bottom:8px;
 }
-footer code{
+.note code{
   font-family:var(--mono);
   background:var(--panel-2);
   padding:1px 6px;
