@@ -64,7 +64,6 @@ h1{
   color:var(--fg-dim);
   font-size:15px;
   line-height:1.9;
-  margin:0 0 48px;
 }
 
 /* ---- Hero counter ---- */
@@ -112,11 +111,12 @@ h1{
 .counter{
   font-family:var(--mono);
   font-weight:700;
-  font-size:clamp(48px, 10vw, 88px);
+  font-size:56px;
   line-height:1;
   letter-spacing:-0.02em;
   font-variant-numeric:tabular-nums;
-  width:7ch;
+  max-width:100%;
+  white-space:nowrap;
   text-align:right;
 }
 
@@ -243,12 +243,6 @@ input[type="range"]:focus-visible::-webkit-slider-thumb{
 .cell-empty{
   background:var(--panel-2);
 }
-.more-note{
-  font-family:var(--mono);
-  font-size:12px;
-  color:var(--fg-dim);
-  margin:-8px 0 14px;
-}
 
 /* ---- Finder row ---- */
 .row{
@@ -325,9 +319,6 @@ input[type="range"]:focus-visible::-webkit-slider-thumb{
   color:var(--fg-dim);
   font-size:12px;
   line-height:2;
-  /* border-top:1px solid var(--line); */
-  padding-bottom:24px;
-  margin-bottom:8px;
 }
 .note code{
   font-family:var(--mono);

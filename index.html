@@ -18,7 +18,7 @@
   <p class="note">
     真っ白 (255,255,255) からのユークリッド距離
     <code>√((255-R)² + (255-G)² + (255-B)²)</code> が指定した距離以内に入る
-    RGB色の数を数えています。全16,777,216色のうち白コーナー付近のみを対象に、
+    RGB色の数を数えています。全16,777,216色のうち白コーナー付近のみを対象に
     計算しています。
   </p>
 
@@ -48,15 +48,14 @@
       <div class="counter-block">
         <div class="section-title">Description</div>
         <p class="swatch-caption">
-          左上が純白 <code>(255,255,255)</code>、右下に向かうほど白から遠い色です。
+          左上が真っ白 <code>(255,255,255)</code>、右下に向かうほど白から遠い色です。
           <b x-text="renderNote"></b>
         </p>
-        <div class="more-note" x-text="moreNote"></div>
 
         <div class="section-title">Count</div>
         <canvas class="counter-chart" x-ref="chart"></canvas>
         <div class="counter-row">
-          <div class="counter" x-text="count.toLocaleString('ja-JP')">1</div>
+          <div class="counter" :style="`font-size:${counterFontSize}px`" x-text="count.toLocaleString('ja-JP')">1</div>
           <div class="counter-unit">色</div>
         </div>
         <div class="counter-sub" x-text="`全体の ${percentText}%`">全体の 0.0000060%</div>

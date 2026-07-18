@@ -1,29 +1,66 @@
 // ---- 重い計算はAlpineのリアクティブ管理の外(プレーンなJS)に置いてパフォーマンスを確保 ----
-const MAX_DIFF = 40;
-const MAX_DIST = 30;
+const CHANNEL_MAX = 255; // RGB各チャンネルの差分の最大値
+const MAX_DIST = CHANNEL_MAX * Math.sqrt(3); // 白(255,255,255)から黒(0,0,0)までの距離=色空間全体を覆う最大値
+// LIMITは整数のまま持つ(MAX_DISTを2乗して求めると浮動小数点誤差で黒が1色だけ漏れることがある)
+const LIMIT = 3 * CHANNEL_MAX * CHANNEL_MAX;
 
-const points = [];
-for (let dr = 0; dr <= MAX_DIFF; dr++) {
-  for (let dg = 0; dg <= MAX_DIFF; dg++) {
-    for (let db = 0; db <= MAX_DIFF; db++) {
-      const d2 = dr * dr + dg * dg + db * db;
-      if (d2 <= MAX_DIST * MAX_DIST) {
-        points.push({ r: 255 - dr, g: 255 - dg, b: 255 - db, d2 });
-      }
+// d2(距離の2乗)ごとの件数をヒストグラム化してからオフセットを割り出し、
+// 各点をソート済み位置に直接書き込む(カウンティングソート)。
+// 通常のArray.sort(比較関数)だと対象が数百万件規模になり数秒かかるため採用。
+let total = 0;
+const hist = new Uint32Array(LIMIT + 1);
+for (let dr = 0; dr <= CHANNEL_MAX; dr++) {
+  const dr2 = dr * dr;
+  if (dr2 > LIMIT) break;
+  for (let dg = 0; dg <= CHANNEL_MAX; dg++) {
+    const dg2 = dg * dg;
+    if (dr2 + dg2 > LIMIT) break;
+    for (let db = 0; db <= CHANNEL_MAX; db++) {
+      const d2 = dr2 + dg2 + db * db;
+      if (d2 > LIMIT) break;
+      hist[d2]++;
+      total++;
     }
   }
 }
-points.sort((a, b) => a.d2 - b.d2);
+
+const offset = new Uint32Array(LIMIT + 2);
+for (let i = 0; i <= LIMIT; i++) offset[i + 1] = offset[i] + hist[i];
+
+const pointsR = new Uint8Array(total);
+const pointsG = new Uint8Array(total);
+const pointsB = new Uint8Array(total);
+const pointsD2 = new Uint32Array(total);
+
+const cursor = offset.slice(0, LIMIT + 1);
+for (let dr = 0; dr <= CHANNEL_MAX; dr++) {
+  const dr2 = dr * dr;
+  if (dr2 > LIMIT) break;
+  for (let dg = 0; dg <= CHANNEL_MAX; dg++) {
+    const dg2 = dg * dg;
+    if (dr2 + dg2 > LIMIT) break;
+    for (let db = 0; db <= CHANNEL_MAX; db++) {
+      const d2 = dr2 + dg2 + db * db;
+      if (d2 > LIMIT) break;
+      const pos = cursor[d2]++;
+      pointsR[pos] = 255 - dr;
+      pointsG[pos] = 255 - dg;
+      pointsB[pos] = 255 - db;
+      pointsD2[pos] = d2;
+    }
+  }
+}
+const pointsLength = total;
 
 const TOTAL_COLORS = 256 * 256 * 256;
 const MAX_RENDER = 400;
 
 function countAt(d) {
   const target = d * d + 1e-9;
-  let lo = 0, hi = points.length;
+  let lo = 0, hi = pointsLength;
   while (lo < hi) {
     const mid = (lo + hi) >> 1;
-    if (points[mid].d2 <= target) lo = mid + 1; else hi = mid;
+    if (pointsD2[mid] <= target) lo = mid + 1; else hi = mid;
   }
   return lo;
 }
@@ -43,11 +80,11 @@ function whiteApp() {
     dist: 6.5,
     maxDist: MAX_DIST,
     count: 0,
+    counterFontSize: 56,
     percentText: '0',
     cells: [],
     displayCells: [],
     renderNote: '',
-    moreNote: '',
     targetInput: 200,
     findResult: '',
 
@@ -67,27 +104,30 @@ function whiteApp() {
       const count = countAt(d);
       this.count = count;
 
+      // 桁数に応じてフォントサイズを縮め、300px幅の枠からはみ出さないようにする
+      const digits = count.toLocaleString('ja-JP').length;
+      this.counterFontSize = Math.max(28, Math.min(88, Math.floor(280 / (digits * 0.62))));
+
       const pct = (count / TOTAL_COLORS) * 100;
       this.percentText = pct.toFixed(pct < 0.001 ? 7 : 4);
 
       if (count === 0) {
         this.cells = [];
         this.renderNote = '該当する色がありません';
-        this.moreNote = '';
       } else if (count <= MAX_RENDER) {
-        this.cells = points.slice(0, count).map(p => ({ r: p.r, g: p.g, b: p.b, d: Math.sqrt(p.d2) }));
+        this.cells = [];
+        for (let i = 0; i < count; i++) {
+          this.cells.push({ r: pointsR[i], g: pointsG[i], b: pointsB[i], d: Math.sqrt(pointsD2[i]) });
+        }
         this.renderNote = `${count.toLocaleString('ja-JP')}色すべてを表示中`;
-        this.moreNote = '';
       } else {
         const sampled = [];
         for (let i = 0; i < MAX_RENDER; i++) {
           const idx = Math.floor((i / (MAX_RENDER - 1)) * (count - 1));
-          const p = points[idx];
-          sampled.push({ r: p.r, g: p.g, b: p.b, d: Math.sqrt(p.d2) });
+          sampled.push({ r: pointsR[idx], g: pointsG[idx], b: pointsB[idx], d: Math.sqrt(pointsD2[idx]) });
         }
         this.cells = sampled;
-        this.renderNote = `${MAX_RENDER}色を間引いて表示中`;
-        this.moreNote = `※ 実際は ${count.toLocaleString('ja-JP')} 色あります(表示負荷軽減のため間引いています)`;
+        this.renderNote = `${MAX_RENDER}色に間引いて表示中`;
       }
 
       this.displayCells = Array.from({ length: MAX_RENDER }, (_, i) => this.cells[i] || null);
@@ -143,9 +183,9 @@ function whiteApp() {
       ctx.lineWidth = 1.8;
       ctx.beginPath();
       let started = false;
-      const step = Math.max(1, Math.floor(points.length / 600));
-      for (let i = 0; i < points.length; i += step) {
-        const d = Math.sqrt(points[i].d2);
+      const step = Math.max(1, Math.floor(pointsLength / 600));
+      for (let i = 0; i < pointsLength; i += step) {
+        const d = Math.sqrt(pointsD2[i]);
         if (d > chartMaxD) break;
         const x = xPix(d);
         const y = yPix(i + 1);
