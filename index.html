@@ -46,11 +46,14 @@
       </div>
 
       <div class="counter-block">
+        <div class="section-title">Description</div>
         <p class="swatch-caption">
           左上が純白 <code>(255,255,255)</code>、右下に向かうほど白から遠い色です。
           <b x-text="renderNote"></b>
         </p>
         <div class="more-note" x-text="moreNote"></div>
+
+        <div class="section-title">Count</div>
         <canvas class="counter-chart" x-ref="chart"></canvas>
         <div class="counter-row">
           <div class="counter" x-text="count.toLocaleString('ja-JP')">1</div>
