@@ -10,9 +10,9 @@
 が指定した距離以内に収まるRGB色が、全16,777,216色中いくつあるかを計算し、
 スライダーで距離を変えながら対象の色をスウォッチとグラフで確認できます。
 
-## デモ
+## イメージ
 
-`index.html` をブラウザで開くだけで動作します（ビルドやサーバー不要）。
+<img width="805" height="768" alt="image" src="https://github.com/user-attachments/assets/4daa4c2b-7ef6-4ef8-8fb7-8f00c7f05fc4" />
 
 ## 主な機能
 
